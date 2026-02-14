@@ -28,23 +28,24 @@
         h1 {
             color: #ff8fa3;
             margin-bottom: 50px;
-            font-size: 3rem;
+            font-size: 2.5rem;
+            text-align: center;
             text-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
         }
 
-        /* Yan Fotoğraflar (Başta Gizli) */
+        /* Yan Fotoğraflar */
         .side-photo {
             position: absolute;
             bottom: 15%;
-            width: 160px;
-            height: 200px;
+            width: 150px;
+            height: 190px;
             background: white;
-            padding: 10px 10px 30px 10px; /* Polaroid efekti */
-            box-shadow: 0 15px 30px rgba(0,0,0,0.7);
+            padding: 8px 8px 25px 8px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.8);
             z-index: 5;
-            opacity: 0; /* Gizli */
-            transform: scale(0.5); /* Küçük başla */
-            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            visibility: hidden; /* Tamamen gizle */
+            transition: all 1s ease-in-out;
         }
 
         .side-photo img {
@@ -53,42 +54,27 @@
             object-fit: cover;
         }
 
-        .photo-left { left: 5%; transform: rotate(-10deg) scale(0.5); }
-        .photo-right { right: 5%; transform: rotate(10deg) scale(0.5); }
+        .photo-left { left: 5%; transform: rotate(-15deg) translateY(100px); }
+        .photo-right { right: 5%; transform: rotate(15deg) translateY(100px); }
 
-        /* Zarf açılınca fotoğrafları göster */
-        .open .photo-left { opacity: 1; transform: rotate(-10deg) scale(1); }
-        .open .photo-right { opacity: 1; transform: rotate(10deg) scale(1); }
-
-        .love-text {
-            position: absolute;
-            color: rgba(255, 77, 109, 0.2);
-            font-size: 4rem;
-            font-weight: bold;
-            top: 25%;
-            z-index: 1;
+        /* Zarf açılınca fotoğrafları göster (JS ile tetiklenecek) */
+        .show-photos .photo-left { 
+            opacity: 1; 
+            visibility: visible;
+            transform: rotate(-10deg) translateY(0); 
         }
-        .love-left { left: 10%; }
-        .love-right { right: 10%; }
-
-        .floating-heart {
-            position: absolute;
-            color: #ff4d6d;
-            animation: fly linear infinite;
-            z-index: 2;
-        }
-        @keyframes fly {
-            0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
-            50% { opacity: 0.6; }
-            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        .show-photos .photo-right { 
+            opacity: 1; 
+            visibility: visible;
+            transform: rotate(10deg) translateY(0); 
         }
 
         .container { position: relative; z-index: 10; }
 
         .envelope-wrapper {
             position: relative;
-            width: 300px;
-            height: 200px;
+            width: 280px;
+            height: 180px;
             background: var(--color-env);
             border-radius: 0 0 10px 10px;
             box-shadow: 0 15px 45px rgba(255, 77, 109, 0.6);
@@ -99,19 +85,19 @@
             content: "";
             position: absolute;
             z-index: 5;
-            border-top: 100px solid transparent;
-            border-right: 150px solid var(--color-env2);
-            border-bottom: 100px solid var(--color-env2);
-            border-left: 150px solid #ff8fa3;
+            border-top: 90px solid transparent;
+            border-right: 140px solid var(--color-env2);
+            border-bottom: 90px solid var(--color-env2);
+            border-left: 140px solid #ff8fa3;
             border-radius: 0 0 10px 10px;
         }
 
         .lid {
             position: absolute;
             top: 0; left: 0;
-            border-top: 110px solid #ff4d6d;
-            border-left: 150px solid transparent;
-            border-right: 150px solid transparent;
+            border-top: 100px solid #ff4d6d;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
             transform-origin: top;
             transition: transform 0.6s ease;
             z-index: 6;
@@ -119,11 +105,11 @@
 
         .paper {
             position: absolute;
-            bottom: 10px; left: 25px;
-            width: 250px; height: 180px;
+            bottom: 10px; left: 20px;
+            width: 240px; height: 160px;
             background: var(--color-paper);
             text-align: center;
-            padding: 15px;
+            padding: 10px;
             transition: all 0.8s ease-in-out;
             z-index: 4;
             display: flex;
@@ -132,24 +118,22 @@
             align-items: center;
         }
 
-        .paper h2 { color: var(--color-text); font-size: 1.2rem; opacity: 0; }
+        .paper h2 { color: var(--color-text); font-size: 1.1rem; opacity: 0; }
 
         .container.open .lid { transform: rotateX(180deg); z-index: 2; }
-        .container.open .paper { transform: translateY(-130px); }
-        .container.open .paper.clicked { transform: translateY(-220px) scale(1.1); z-index: 12; }
+        .container.open .paper { transform: translateY(-120px); }
+        .container.open .paper.clicked { transform: translateY(-200px) scale(1.1); z-index: 12; }
         .container.open .paper.clicked h2 { opacity: 1; }
 
-        .heart-svg { width: 50px; fill: #ff4d6d; animation: pulse 1.5s infinite; }
+        .heart-svg { width: 40px; fill: #ff4d6d; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
         .instruction {
-            margin-top: 20px;
+            margin-top: 25px;
             color: white;
             font-family: sans-serif;
-            font-size: 0.9rem;
-            background: rgba(255, 77, 109, 0.3);
-            padding: 8px 20px;
-            border-radius: 20px;
+            font-size: 0.8rem;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -157,7 +141,7 @@
 
     <h1>Sana Özel Bir Sürpriz ❤️</h1>
 
-    <audio id="mySong" loop>
+    <audio id="mySong" loop preload="auto">
         <source src="muzik.mp3" type="audio/mpeg">
     </audio>
 
@@ -165,11 +149,8 @@
         <img src="sol.png" alt="Biz">
     </div>
     <div class="side-photo photo-right">
-        <img src="sağ.jpg" alt="Biz">
+        <img src="sag.jpg" alt="Biz">
     </div>
-
-    <div class="love-text love-left">LOVE</div>
-    <div class="love-text love-right">YOU</div>
 
     <div class="container" id="envelopeContainer">
         <div class="envelope-wrapper" onclick="toggleEnvelope()">
@@ -188,24 +169,17 @@
         let isOpen = false;
         const song = document.getElementById('mySong');
 
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.className = 'floating-heart';
-            heart.innerHTML = '❤️';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = Math.random() * 3 + 4 + 's';
-            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
-            document.body.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 6000);
-        }
-        setInterval(createHeart, 400);
-
         function toggleEnvelope() {
             if (!isOpen) {
                 document.getElementById('envelopeContainer').classList.add('open');
-                document.getElementById('mainBody').classList.add('open');
+                // Fotoğrafları gösteren sınıfı body'e ekle
+                document.body.classList.add('show-photos');
                 isOpen = true;
-                song.play(); 
+                
+                // Müzik Döngüsünü Garanti Et
+                song.loop = true; 
+                song.play().catch(e => console.log("Müzik başlatılamadı:", e));
+                
                 flowerBurst();
             }
         }
@@ -213,11 +187,7 @@
         function showMessage(e) {
             e.stopPropagation();
             document.getElementById('mainPaper').classList.add('clicked');
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.3 }
-            });
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.3 } });
         }
 
         function flowerBurst() {
@@ -234,6 +204,11 @@
                 }
             });
         }
+
+        // Müzik biterse zorla tekrar başlat (Ekstra Garanti)
+        song.onended = function() {
+            song.play();
+        };
     </script>
 </body>
 </html>
