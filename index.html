@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sana Bir Sürprizim Var ❤️</title>
+    <title>Sana Özel Bir Sürpriz ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -16,49 +16,74 @@
         body {
             background-color: #0a0a0a;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             font-family: 'Brush Script MT', cursive;
             overflow: hidden;
-            /* Arka plan fotoğrafı - Yüklediğin foto.png dosyasına göre güncellendi */
-            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('foto.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
         }
+
+        h1 {
+            color: #ff8fa3;
+            margin-bottom: 50px;
+            font-size: 3rem;
+            text-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
+        }
+
+        /* Yan Fotoğraflar (Başta Gizli) */
+        .side-photo {
+            position: absolute;
+            bottom: 15%;
+            width: 160px;
+            height: 200px;
+            background: white;
+            padding: 10px 10px 30px 10px; /* Polaroid efekti */
+            box-shadow: 0 15px 30px rgba(0,0,0,0.7);
+            z-index: 5;
+            opacity: 0; /* Gizli */
+            transform: scale(0.5); /* Küçük başla */
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .side-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-left { left: 5%; transform: rotate(-10deg) scale(0.5); }
+        .photo-right { right: 5%; transform: rotate(10deg) scale(0.5); }
+
+        /* Zarf açılınca fotoğrafları göster */
+        .open .photo-left { opacity: 1; transform: rotate(-10deg) scale(1); }
+        .open .photo-right { opacity: 1; transform: rotate(10deg) scale(1); }
 
         .love-text {
             position: absolute;
             color: rgba(255, 77, 109, 0.2);
-            font-size: 5rem;
+            font-size: 4rem;
             font-weight: bold;
-            pointer-events: none;
+            top: 25%;
             z-index: 1;
         }
-        .love-left { left: 5%; transform: rotate(-90deg); }
-        .love-right { right: 5%; transform: rotate(90deg); }
+        .love-left { left: 10%; }
+        .love-right { right: 10%; }
 
         .floating-heart {
             position: absolute;
             color: #ff4d6d;
-            font-size: 20px;
-            user-select: none;
-            pointer-events: none;
             animation: fly linear infinite;
             z-index: 2;
         }
         @keyframes fly {
-            0% { transform: translateY(105vh) translateX(0); opacity: 0; }
+            0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
             50% { opacity: 0.6; }
-            100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
 
-        .container {
-            position: relative;
-            z-index: 10;
-        }
+        .container { position: relative; z-index: 10; }
 
         .envelope-wrapper {
             position: relative;
@@ -83,42 +108,31 @@
 
         .lid {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             border-top: 110px solid #ff4d6d;
             border-left: 150px solid transparent;
             border-right: 150px solid transparent;
             transform-origin: top;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.6s ease;
             z-index: 6;
         }
 
         .paper {
             position: absolute;
-            bottom: 10px;
-            left: 25px;
-            width: 250px;
-            height: 180px;
+            bottom: 10px; left: 25px;
+            width: 250px; height: 180px;
             background: var(--color-paper);
             text-align: center;
             padding: 15px;
-            box-sizing: border-box;
             transition: all 0.8s ease-in-out;
             z-index: 4;
-            border-radius: 5px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
 
-        .paper h2 {
-            color: var(--color-text);
-            font-size: 1.4rem;
-            margin: 10px 0;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
+        .paper h2 { color: var(--color-text); font-size: 1.2rem; opacity: 0; }
 
         .container.open .lid { transform: rotateX(180deg); z-index: 2; }
         .container.open .paper { transform: translateY(-130px); }
@@ -126,31 +140,33 @@
         .container.open .paper.clicked h2 { opacity: 1; }
 
         .heart-svg { width: 50px; fill: #ff4d6d; animation: pulse 1.5s infinite; }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
         .instruction {
-            position: absolute;
-            bottom: -60px;
-            width: 100%;
-            text-align: center;
+            margin-top: 20px;
             color: white;
-            font-family: Arial, sans-serif;
-            font-size: 0.8rem;
-            background: rgba(0,0,0,0.5);
-            padding: 5px;
+            font-family: sans-serif;
+            font-size: 0.9rem;
+            background: rgba(255, 77, 109, 0.3);
+            padding: 8px 20px;
             border-radius: 20px;
         }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
-    <audio id="mySong">
+    <h1>Sana Özel Bir Sürpriz ❤️</h1>
+
+    <audio id="mySong" loop>
         <source src="muzik.mp3" type="audio/mpeg">
     </audio>
+
+    <div class="side-photo photo-left">
+        <img src="sol.png" alt="Biz">
+    </div>
+    <div class="side-photo photo-right">
+        <img src="sağ.jpg" alt="Biz">
+    </div>
 
     <div class="love-text love-left">LOVE</div>
     <div class="love-text love-right">YOU</div>
@@ -165,14 +181,13 @@
                 <h2 id="msgText">Sevgililer günün kutlu olsun bebeğim</h2>
             </div>
         </div>
-        <div class="instruction">Zarfa tıkla, hem şarkımız başlasın hem sürprizi gör ❤️</div>
     </div>
+    <div class="instruction">Zarfa tıkla ❤️</div>
 
     <script>
         let isOpen = false;
         const song = document.getElementById('mySong');
 
-        // Uçan Kalpler
         function createHeart() {
             const heart = document.createElement('div');
             heart.className = 'floating-heart';
@@ -188,11 +203,9 @@
         function toggleEnvelope() {
             if (!isOpen) {
                 document.getElementById('envelopeContainer').classList.add('open');
+                document.getElementById('mainBody').classList.add('open');
                 isOpen = true;
-                
-                // Müzik çalmaya başlar
-                song.play().catch(e => console.log("Müzik otomatik başlatılamadı:", e));
-                
+                song.play(); 
                 flowerBurst();
             }
         }
@@ -201,10 +214,9 @@
             e.stopPropagation();
             document.getElementById('mainPaper').classList.add('clicked');
             confetti({
-                particleCount: 80,
-                spread: 100,
-                origin: { y: 0.3 },
-                colors: ['#ff4d6d', '#ffffff', '#ff8fa3']
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.3 }
             });
         }
 
