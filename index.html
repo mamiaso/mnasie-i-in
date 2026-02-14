@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sevgililer Günü Kutlaması ❤️</title>
+    <title>Sana Bir Sürprizim Var ❤️</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --color-env: linear-gradient(135deg, #ff4d6d, #ff8fa3); 
@@ -13,20 +14,20 @@
         }
 
         body {
-            background-color: #0a0a0a; /* Daha derin, premium bir siyah */
+            background-color: #0a0a0a;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            font-family: 'Brush Script MT', cursive; /* Daha romantik bir font */
+            font-family: 'Brush Script MT', cursive;
             overflow: hidden;
         }
 
         /* Love You Yazıları */
         .love-text {
             position: absolute;
-            color: rgba(255, 77, 109, 0.2);
+            color: rgba(255, 77, 109, 0.1);
             font-size: 5rem;
             font-weight: bold;
             pointer-events: none;
@@ -35,12 +36,28 @@
         .love-left { left: 5%; transform: rotate(-90deg); }
         .love-right { right: 5%; transform: rotate(90deg); }
 
+        /* Uçan Arka Plan Kalpleri */
+        .floating-heart {
+            position: absolute;
+            color: #ff4d6d;
+            font-size: 20px;
+            user-select: none;
+            pointer-events: none;
+            animation: fly linear infinite;
+            z-index: 2;
+            opacity: 0;
+        }
+        @keyframes fly {
+            0% { transform: translateY(105vh) translateX(0); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
+        }
+
         .container {
             position: relative;
             z-index: 10;
         }
 
-        /* Zarfın Tabanı */
         .envelope-wrapper {
             position: relative;
             width: 300px;
@@ -51,7 +68,6 @@
             cursor: pointer;
         }
 
-        /* Zarfın Yan Kanatları */
         .envelope-wrapper::before {
             content: "";
             position: absolute;
@@ -63,7 +79,6 @@
             border-radius: 0 0 10px 10px;
         }
 
-        /* Zarf Kapağı */
         .lid {
             position: absolute;
             top: 0;
@@ -76,7 +91,6 @@
             z-index: 6;
         }
 
-        /* Mesaj Kağıdı */
         .paper {
             position: absolute;
             bottom: 10px;
@@ -88,13 +102,12 @@
             padding: 15px;
             box-sizing: border-box;
             transition: all 0.8s ease-in-out;
-            z-index: 4; /* Kanatların arkasında, tabanın önünde */
+            z-index: 4;
             border-radius: 5px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
         .paper h2 {
@@ -105,49 +118,16 @@
             transition: opacity 0.5s ease;
         }
 
-        /* Animasyonlar */
-        .container.open .lid {
-            transform: rotateX(180deg);
-            z-index: 2;
-        }
+        .container.open .lid { transform: rotateX(180deg); z-index: 2; }
+        .container.open .paper { transform: translateY(-130px); }
+        .container.open .paper.clicked { transform: translateY(-220px) scale(1.1); z-index: 7; }
+        .container.open .paper.clicked h2 { opacity: 1; }
 
-        .container.open .paper {
-            transform: translateY(-130px); /* Kağıt yukarı çıkar */
-            z-index: 4;
-        }
-
-        /* Kağıda tıklandığında dışarı fırlasın */
-        .container.open .paper.clicked {
-            transform: translateY(-220px) scale(1.1); 
-            z-index: 7; /* Kanatların önüne geçmesi için */
-        }
-
-        .container.open .paper.clicked h2 {
-            opacity: 1;
-        }
-
-        /* Kalp ve Çiçek SVG Tasarımları */
         .heart-svg { width: 50px; fill: #ff4d6d; animation: pulse 1.5s infinite; }
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
-        }
-
-        /* Uçan Arka Plan Kalpleri */
-        .bg-heart {
-            position: absolute;
-            color: #ff4d6d;
-            font-size: 20px;
-            user-select: none;
-            animation: fly linear infinite;
-            z-index: 2;
-            opacity: 0;
-        }
-        @keyframes fly {
-            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
-            50% { opacity: 0.6; }
-            100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
         }
 
         .instruction {
@@ -157,8 +137,8 @@
             text-align: center;
             color: white;
             font-family: Arial, sans-serif;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
+            font-size: 0.8rem;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -177,31 +157,59 @@
                 <h2 id="msgText">Sevgililer günün kutlu olsun bebeğim</h2>
             </div>
         </div>
-        <div class="instruction">Önce zarfa, sonra kağıda tıkla ❤️</div>
+        <div class="instruction">Zarfa tıkla ❤️</div>
     </div>
 
     <script>
+        let isOpen = false;
+
+        // --- Uçan Kalpler Mantığı ---
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 4 + 's';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 6000);
+        }
+        setInterval(createHeart, 400); // Sürekli kalpler
+
+        // --- Zarf ve Patlama Mantığı ---
         function toggleEnvelope() {
-            document.getElementById('envelopeContainer').classList.add('open');
+            if (!isOpen) {
+                document.getElementById('envelopeContainer').classList.add('open');
+                isOpen = true;
+                flowerBurst();
+            }
         }
 
         function showMessage(e) {
-            e.stopPropagation(); // Zarfın kapanmasını engelle
+            e.stopPropagation();
             document.getElementById('mainPaper').classList.add('clicked');
+            confetti({
+                particleCount: 50,
+                spread: 100,
+                origin: { y: 0.3 },
+                colors: ['#ff4d6d', '#ffffff', '#ff8fa3']
+            });
         }
 
-        // Arka plan kalpleri oluşturucu
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.className = 'bg-heart';
-            heart.innerHTML = '❤️';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
-            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
-            document.body.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 5000);
+        function flowerBurst() {
+            confetti({
+                origin: { y: 0.6 },
+                zIndex: 999,
+                particleCount: 100,
+                spread: 120,
+                velocity: 35,
+                scalar: 2,
+                shapes: ['text'],
+                shapeOptions: {
+                    text: { value: ['🌸', '🌹', '🌷', '🌺', '❤️', '✨'] }
+                }
+            });
         }
-        setInterval(createHeart, 300);
     </script>
 </body>
 </html>
